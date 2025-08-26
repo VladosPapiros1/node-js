@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Чат операторів</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      color: #333;
+    }
+
+    .sidebar {
+      width: 250px;
+      background: #4CAF50;
+      color: white;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .sidebar h3 {
+      margin: 0 0 15px;
+      font-size: 20px;
+    }
+
+    .client {
+      padding: 10px;
+      margin-bottom: 8px;
+      background: #45a049;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .client:hover {
+      background: #3e8e41;
+    }
+
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background: #fff;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .message {
+      margin: 6px 0;
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 70%;
+      font-size: 14px;
+      line-height: 1.4;
+      position: relative;
+    }
+
+    .client-msg {
+      background: #6a82fb;
+      color: white;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+    }
+
+    .operator-msg {
+      background: #4CAF50;
+      color: white;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+    }
+
+    .meta {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 3px;
+      text-align: right;
+    }
+
+    .input-box {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    .input-box input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 10px 0 0 10px;
+      outline: none;
+      background: #f0f0f0;
+      font-size: 14px;
+    }
+
+    .input-box button {
+      background: #4CAF50;
+      border: none;
+      padding: 0 20px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 0 10px 10px 0;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .input-box button:hover {
+      background: #45a049;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <h3>Клієнти</h3>
+    <div id="clientList">
+      <% Object.keys(clients).forEach(clientId=> { %>
+        <div class="client" onclick="joinClient('<%= clientId %>')">
+          <%= clients[clientId].username %>
+        </div>
+        <% }) %>
+    </div>
+  </div>
+
+  <div class="chat-container">
+    <h2>Чат з клієнтом: <span id="currentClient">не вибрано</span></h2>
+    <div class="messages" id="messages"></div>
+    <div class="input-box">
+      <input id="msgInput" type="text" placeholder="Напишіть повідомлення..." />
+      <button onclick="sendMessage()">➤</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const messages = document.getElementById("messages");
+    const msgInput = document.getElementById("msgInput");
+    const currentClientSpan = document.getElementById("currentClient");
+    const clientListDiv = document.getElementById("clientList");
+
+    let currentClientId = null;
+    let clients = {};
+    const OPERATOR_NAME = `Оператор <%= username %>`;
+
+    socket.emit('operator_register');
+    // Приєднання оператора до кімнати клієнта
+    function joinClient(clientId) {
+      currentClientId = clientId;
+      currentClientSpan.innerText = clients[clientId]?.username || clientId;
+      messages.innerHTML = '';
+      socket.emit('operator_join', { clientId });
+    }
+ 
+    // Відправка повідомлення оператором
+    function sendMessage() {
+      const text = msgInput.value.trim();
+      if (!text || !currentClientId) return;
+      socket.emit('operator_message', { clientId: currentClientId, text, username: OPERATOR_NAME });
+      addMessage(OPERATOR_NAME, text, 'operator-msg');
+      msgInput.value = '';
+    }
+
+    // Додавання повідомлення в UI
+    function addMessage(user, text, type) {
+      const div = document.createElement("div");
+      div.classList.add("message", type);
+      div.innerHTML = `<strong>${user}</strong><br>${text}<div class="meta">${new Date().toLocaleTimeString()}</div>`;
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    // Отримання повідомлення від клієнта
+    socket.on('operator_receive', ({ clientId, text, username }) => {
+      if (clientId === currentClientId) {
+        addMessage(username, text, 'client-msg');
+      }
+    });
+
+    // Оновлення списку клієнтів
+    socket.on('update_clients', (updatedClients) => {
+      clients = updatedClients; // зберігаємо для заголовка
+      clientListDiv.innerHTML = '';
+      Object.keys(clients).forEach(id => {
+        const div = document.createElement('div');
+        div.classList.add('client');
+        div.innerText = clients[id].username;
+        div.onclick = () => joinClient(id);
+        clientListDiv.appendChild(div);
+      });
+    });
+
+    // Відправка на Enter
+    msgInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+
+</html>
