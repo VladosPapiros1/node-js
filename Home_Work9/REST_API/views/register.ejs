@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Реєстрація</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 400px;
+    }
+    input {
+      width: 100%;
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 12px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    a {
+      display: block;
+      margin-top: 15px;
+      color: #007bff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Реєстрація</h2>
+    <form action="/register" method="POST">
+      <input type="text" name="username" placeholder="Ваше ім’я" required /><br />
+      <input type="email" name="email" placeholder="Email" required />
+      <input type="password" name="password" placeholder="Пароль" required />
+      <button type="submit">Зареєструватися</button>
+    </form>
+    <a href="/login">Вже є акаунт?</a>
+  </div>
+</body>
+</html>

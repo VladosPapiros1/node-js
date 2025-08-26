@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Вхід</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        background: #f0f2f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .login-box {
+        background: white;
+        padding: 40px 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+        width: 320px;
+        text-align: center;
+        position: relative;
+      }
+
+      .monkey {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 20px;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+
+      .password-wrapper {
+        position: relative;
+      }
+
+      .toggle-password {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #28a745;
+        border: none;
+        color: white;
+        font-weight: bold;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #218838;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-box">
+      <img
+        src="/images/monkey-hide.png"
+        alt="monkey"
+        class="monkey"
+        id="monkey"
+      />
+      <h2>Вхід</h2>
+      <form action="/login" method="POST">
+        <input name="email" type="email" placeholder="Email" required />
+        <div class="password-wrapper">
+          <input
+            name="password"
+            type="password"
+            placeholder="Пароль"
+            id="password"
+            required
+          />
+          <button type="button" class="toggle-password" onclick="togglePassword()">
+            👁
+          </button>
+        </div>
+        <button type="submit">Увійти</button>
+      </form>
+    </div>
+
+    <script>
+      function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const monkeyImage = document.getElementById("monkey");
+
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          monkeyImage.src = "/images/monkey-show.png";
+        } else {
+          passwordInput.type = "password";
+          monkeyImage.src = "/images/monkey-hide.png";
+        }
+      }
+    </script>
+  </body>
+</html>
