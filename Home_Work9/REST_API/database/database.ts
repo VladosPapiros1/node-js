@@ -6,6 +6,7 @@ dotenv.config();
 
 class Database {
     private sequelize: Sequelize;
+    private static instance: Database;
 
     constructor() {
         const dbName = process.env.DB_NAME!;
@@ -20,6 +21,13 @@ class Database {
             logging: console.log,
         });
     }
+    public static getInstance(): Database {
+        if (!Database.instance) {
+            Database.instance = new Database();
+        }
+        return Database.instance;
+    }
+
 
     public async connect(): Promise<void> {
         try {

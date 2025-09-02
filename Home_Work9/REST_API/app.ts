@@ -7,7 +7,7 @@ import { routerUpload, routerRegister, routerLogin, UploadListRouter, ChatRouter
 import Database from './database/database';
 import http from 'http';
 import { Server } from 'socket.io';
-import { ChatSocket } from './sockets/ClientSocket'; 
+import { ChatSocket } from './sockets/ClientSocket';
 
 dotenv.config();
 
@@ -18,7 +18,7 @@ export default class App {
     private db: Database;
 
     constructor() {
-        this.db = new Database();
+        this.db = Database.getInstance();
         this.app = express();
         this.port = process.env.PORT || 3000;
         this.setMiddlewares();

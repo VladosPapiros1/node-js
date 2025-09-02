@@ -35,6 +35,7 @@ export class ControllerRegister {
  
             const payload = {
                 id: newUser.id,
+                username: newUser.username,
                 role: newUser.role
             };
 

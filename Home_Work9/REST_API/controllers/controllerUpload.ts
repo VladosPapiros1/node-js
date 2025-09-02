@@ -1,4 +1,4 @@
-// controllers/UploadController.ts
+
 import { Request, Response } from 'express';
 import { FileUpload } from '../models/index';
 import { User } from "../models/index";
